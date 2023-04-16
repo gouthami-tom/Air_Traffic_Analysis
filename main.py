@@ -1,0 +1,143 @@
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import openpyxl
+
+# Load the data into a dataframe
+df_original = pd.read_csv("Data/International_Report_Departures.csv")
+
+# Print the summary
+print(df_original.info())
+
+# We do not have the descriptions of the columns in the dataset.
+# Create a dataframe using MultiIndex in Pandas with column descriptions from the source
+
+columns = [('data_dte', 'Data Date'),
+           ('Year', 'Data Year'),
+           ('Month', 'Data Month'),
+           ('usg_apt_id', 'US Gateway Airport ID - assigned by US DOT to identify an airport'),
+           ('usg_apt',
+            'US Gateway Airport Code - usually assigned by IATA, but in absence of IATA designation, may show '
+            'FAA-assigned code'),
+           ('usg_wac', 'US Gateway World Area Code - assigned by US DOT to represent a geographic territory'),
+           ('fg_apt_id', 'Foreign Gateway Airport ID - assigned by US DOT to identify an airport'),
+           ('fg_apt',
+            'Foreign Gateway Airport Code - usually assigned by IATA, but in absense of IATA designation, '
+            'may show FAA-assigned code'),
+           ('fg_wac', 'Foreign Gateway World Area Code - assigned by US DOT to represent a geographic territory'),
+           ('airlineid', 'Airline ID - assigned by US DOT to identify an air carrier'),
+           ('carrier',
+            'IATA-assigned air carrier code. If carrier has no IATA code, ICAO- or FAA-assigned code may be used'),
+           ('carriergroup', 'Carrier Group Code - 1 denotes US domestic air carriers, 0 denotes foreign air carriers'),
+           ('type', 'Defines the type of the four metrics in this report'),
+           ('Scheduled', 'Metric flown by scheduled service operations'),
+           ('Charter', 'Metric flown by charter operations'),
+           ('Total', 'Total Metric flown by scheduled service and charter operations')]
+
+df_descriptions = pd.DataFrame(df_original.values,
+                               columns=pd.MultiIndex.from_tuples(columns, names=["Columns", "Column Description"]))
+
+# Print the summary with descriptions added
+print(df_descriptions.info())
+
+# Note that the datatype of fields other than object from the original dataframe changed into object, resulting in a
+# dataframe with all the values as object types. This is because the MultiIndex stores the data as pandas series
+# which is of type object. We can perform typecasting here explicitly but in order not to complicate it let us use
+# the original dataframe for further analysis as this step is to just know what the columns actually mean in the
+# dataset.
+
+# Print initial rows
+print('-----------------------------------------------------')
+print(df_original.head())
+print('-----------------------------------------------------')
+
+# Print the shape(dimensions)
+print(f'The dimensions of the data are {df_original.shape}')
+
+# The data is huge and hence let us consider a sample of the data for our analysis
+# 0.1 indicates we consider 10% of the rows from original dataset
+df_sampled = df_original.sample(frac=0.1, random_state=22)
+print(f'The dimensions of the sampled data are {df_sampled.shape}')
+
+# It is very important that we do not consider a random sample, as the resultant analysis may be biased towards a
+# particular feature. Hence, we need to know the descriptive statistics and distribution of the sampled dataframe for
+# an accurate analysis.
+
+# 1. Sample size
+print(f'The size of the sampled dataframe is {len(df_sampled)}')
+
+# 2. Sample Distribution
+# For the distribution we can plot same variables from the original data and sampled data
+# and check if their distribution is similar or not.
+# Here let us consider the "Total" column for the distribution
+
+# sns.set_style('darkgrid')
+fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(10, 5))
+sns.histplot(data=df_original, x="Total", kde=True, bins=5, ax=ax1)
+sns.histplot(data=df_sampled, x="Total", kde=True, bins=5, ax=ax2)
+plt.show()
+
+# Both the distributions appear to be the same and hence we can proceed with our analysis with the sampled dataset
+
+# Data Cleaning is an important step before performing any analysis on the data. Cleaning the data includes a series
+# of steps.  2. Remove duplicates 3. Examine the outliers
+# as they have statistical significance that can impact the analysis 4. Check for unnecessary formatting of the data
+# such as symbols, data types, etc
+
+# 1. Find out the missing values and perform data imputation
+print('-----------------------------------------------------')
+print('NULL VALUES')
+print('-----------------------------------------------------')
+print(df_sampled.isnull().sum())
+
+# There are 300 null values in the carrier column. For better understanding, export the dataframe to an Excel and
+# examine the null values. NaN means null values in terms of pandas. Although there can be different kinds of
+# notations to represent missing values.
+
+df_sampled.to_excel("Data/sampled.xlsx", engine="openpyxl")
+
+# When we filter the missing carrier values in the Excel, it is clear that of all the columns, the "airlineid" and
+# "carriergroup" follow a specific pattern. Only the carriers with values "20414" and "20415" have missing carriers.
+# Also, their "carriergroup" is 1 (US domestic air carriers).
+
+# To fill the values, let us understand what the airlineid's mean.
+# airlineid -> carrier
+# 20414     -> "OW"
+# 20415     -> "XG"
+# This clearly tells we can replace the carriers with these respective ID's to eliminate null values in the data.
+# But before replacing the null values, observe that they are blank spaces and not NaN.
+# Hence, filter all the rows with missing values and fill the blank spaces with NaN first.
+# Then replace with respective values.
+
+df_missingcarriers = df_sampled.isnull().values.any(axis=1)
+
+# Prints the rows that has any missing values in df_sampled
+print(df_sampled[df_missingcarriers])
+
+# Now fill the original dataframe with NaN for missing values.
+df_sampled = df_sampled.replace(r'^\s*$', np.nan, regex=True)
+
+# Fill the missing values with respective values
+df_sampled.loc[df_sampled["airlineid"].isin([20414, 20415]), "carrier"] = df_sampled["airlineid"].map(
+    {20414: "OW", 20415: "XG"})
+
+# Calculate the missing values again.
+print('-----------------------------------------------------')
+print('NULL VALUES AFTER IMPUTATION')
+print('-----------------------------------------------------')
+print(df_sampled.isnull().sum())
+
+# 2. Check for duplicate entries
+print('-----------------------------------------------------')
+print('DUPLICATE ENTRIES')
+print('-----------------------------------------------------')
+duplicates = df_sampled.duplicated()
+if duplicates.any():
+    print(duplicates.value_counts())
+else:
+    print("No duplicate entries found")
+
+
+# 3. Examine the outliers
+
