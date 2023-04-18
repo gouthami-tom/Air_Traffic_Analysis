@@ -33,13 +33,15 @@ st.sidebar.markdown("Data and Computing Science Researcher - Carleton University
 st.sidebar.markdown("Contact: gouthamipriyanka1512@gmail.com")
 st.sidebar.divider()
 st.sidebar.markdown("Description")
-st.sidebar.markdown("There could be further analysis that can be conducted using this data such as predicting the airport usage in the upcoming years, relationship between carrier and airport, predicting the passengers count using the passengers data to determine flight prices and airfreight charges in the future. These can be performed using various Machine Learning techniques but require much more data preprocessing and transformations.")
+st.sidebar.markdown("This app is 💡inspired from the use case-study https://resources.sw.siemens.com/hu-HU/case-study-natilus")
+st.sidebar.divider()
+st.sidebar.markdown("This App is to demonstrate the importance of data analysis and how data quality can impact the decisions we make. The explanations and complete documentation can be found in the github link at the end. There could be further analysis that can be conducted using this data such as predicting the airport usage in the upcoming years, relationship between carrier and airport, predicting the passengers count using the passengers data to determine flight prices and airfreight charges in the future. These can be performed using various Machine Learning techniques but require much more data preprocessing and transformations.")
 st.sidebar.divider()
 st.sidebar.markdown("This app is deployed using Streamlit Community Cloud")
 st.sidebar.markdown("Link to dataset: https://data.transportation.gov/Aviation/International_Report_Departures/innc-gbgc")
 st.sidebar.markdown("For complete code and explanation check https://github.com/gouthami-tom/Air_Traffic_Analysis")
 
-# This code is to demonstrate the importance of data analysis and how data quality can impact the decisions we make.")
+# This code is to demonstrate the importance of data analysis and how data quality can impact the decisions we make.
 
 # Load the data into a dataframe
 df_original = pd.read_csv("Data/International_Report_Departures.csv")
