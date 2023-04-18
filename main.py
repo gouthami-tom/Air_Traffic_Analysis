@@ -6,7 +6,7 @@ import openpyxl
 
 # Load the data into a dataframe
 df_original = pd.read_csv("Data/International_Report_Departures.csv")
-
+#
 # Print the summary
 print(df_original.info())
 
@@ -34,7 +34,7 @@ columns = [('data_dte', 'Data Date'),
            ('Scheduled', 'Metric flown by scheduled service operations'),
            ('Charter', 'Metric flown by charter operations'),
            ('Total', 'Total Metric flown by scheduled service and charter operations')]
-
+#
 df_descriptions = pd.DataFrame(df_original.values,
                                columns=pd.MultiIndex.from_tuples(columns, names=["Columns", "Column Description"]))
 
@@ -58,6 +58,7 @@ print(f'The dimensions of the data are {df_original.shape}')
 # The data is huge and hence let us consider a sample of the data for our analysis
 # 0.1 indicates we consider 10% of the rows from original dataset
 df_sampled = df_original.sample(frac=0.1, random_state=22)
+
 print(f'The dimensions of the sampled data are {df_sampled.shape}')
 
 # It is very important that we do not consider a random sample, as the resultant analysis may be biased towards a
@@ -81,9 +82,7 @@ plt.show()
 # Both the distributions appear to be the same and hence we can proceed with our analysis with the sampled dataset
 
 # Data Cleaning is an important step before performing any analysis on the data. Cleaning the data includes a series
-# of steps.  2. Remove duplicates 3. Examine the outliers
-# as they have statistical significance that can impact the analysis 4. Check for unnecessary formatting of the data
-# such as symbols, data types, etc
+# of steps.
 
 # 1. Find out the missing values and perform data imputation
 print('-----------------------------------------------------')
@@ -140,4 +139,70 @@ else:
 
 
 # 3. Examine the outliers
+# To examine the outliers we can use different plots and see if we have extreme values
+# that effect the overall distribution.
+
+columns_of_interest = ["Scheduled", "Charter", "Total"]
+df_outliers = df_sampled[columns_of_interest].copy()
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
+
+#histogram for distribution
+ax1.hist(df_outliers, label=["Scheduled", "Charter", "Total"])
+ax1.set_xlabel('Values')
+ax1.set_ylabel('Frequency')
+ax1.set_title('Sampled Data Distribution')
+ax1.legend()
+
+
+# #boxplot
+ax2.boxplot(df_outliers)
+ax2.set_ylabel('Values')
+ax2.set_xticklabels(["Scheduled", "Charter", "Total"])
+ax2.set_title('Box Plot of Outlier Values')
+
+plt.show()
+
+# We can see that the data is positively skewed since the values are mostly on the left side of the distribution,
+# indicating some extreme values in the distribution. This also means that we need to normalize the data or transform
+# it before using any algorithms that assume a normally distributed data. The boxplot indicates the outlier values
+# clearly and support the distribution in the histogram.
+
+
+# Simple Insights using the dataset
+
+# Busiest airports
+"""
+This function is used to determine the busiest airports based on the area code 
+by IATA and plot them using a barplot.
+:param myParam1: Column name by which groupby should be performed
+:param myParam2: Column name we want to visualize the groupby
+:return: None
+
+"""
+
+
+def busiest_airports(groupby_column, sum_column) -> None:
+    departures_by_airport = df_sampled.groupby(groupby_column)[sum_column].sum()
+    busiest_airports = departures_by_airport.sort_values(ascending=False)
+    airport = busiest_airports.index[0:10]
+    total = busiest_airports.values[0:10]
+    plt.bar(airport, total)
+    plt.xlabel(groupby_column)
+    plt.ylabel(sum_column + ' - US')
+    plt.title('Top 10 Busiest US Airports (1990-2020) based on ' + sum_column)
+    plt.show()
+    return
+
+
+busiest_airports("usg_apt", "Total")
+busiest_airports("fg_apt", "Total")
+
+
+# There could be further analysis that can be conducted using this data such as predicting the airport usage in the
+# upcoming years, relationship between carrier and airport, predicting the passengers count using the passengers data
+# to determine flight prices and airfreight charges in the future. These can be performed using various Machine
+# Learning techniques but require much more data preprocessing and transformations.
+
+# This code is to demonstrate the importance of data analysis and how data quality can impact the decisions we make.
+
 
