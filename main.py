@@ -94,7 +94,8 @@ print(df_sampled.isnull().sum())
 # examine the null values. NaN means null values in terms of pandas. Although there can be different kinds of
 # notations to represent missing values.
 
-df_sampled.to_excel("Data/sampled.xlsx", engine="openpyxl")
+# Uncomment this line to generate the excel again
+# df_sampled.to_excel("Data/sampled.xlsx", engine="openpyxl")
 
 # When we filter the missing carrier values in the Excel, it is clear that of all the columns, the "airlineid" and
 # "carriergroup" follow a specific pattern. Only the carriers with values "20414" and "20415" have missing carriers.
