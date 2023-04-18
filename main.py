@@ -4,6 +4,28 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import io
 import streamlit as st
+import base64
+
+# Background Image
+def add_bg_from_local(image_file):
+    with open(image_file, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read())
+    st.markdown(
+        f"""
+    <style>
+    .stApp {{
+        background-image: url(data:image/{"png"};base64,{encoded_string.decode()});
+        background-size: cover
+    }}
+    </style>
+    """,
+        unsafe_allow_html=True
+    )
+
+add_bg_from_local('Data//flight.jpg')
+
+# Texts
+st.title("Data Analysis for U.S. International Air Traffic data(1990-2020)")
 
 
 # Load the data into a dataframe
@@ -208,14 +230,11 @@ None
 def busiest_airports(groupby_column, sum_column) -> None:
     departures_by_airport = df_sampled.groupby(groupby_column)[sum_column].sum()
     busiest_airports = departures_by_airport.sort_values(ascending=False)
+    busiest_airports_df = busiest_airports.to_frame().reset_index()
     airport = busiest_airports.index[0:10]
     total = busiest_airports.values[0:10]
-    # fig2, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
-    # plt.bar(airport, total)
-    # plt.xlabel(groupby_column)
-    # plt.ylabel(sum_column + ' - US')
-    plt.title('Top 10 Busiest US Airports (1990-2020) based on ' + sum_column)
-    st.bar_chart(data=busiest_airports, x=airport, y=total)
+    st.write('Top 10 Busiest US Airports (1990-2020) based on ' + sum_column)
+    st.bar_chart(data=busiest_airports_df, x=airport, y=total)
     return
 
 
