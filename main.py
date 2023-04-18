@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import io
 import streamlit as st
 
+
 # Load the data into a dataframe
 df_original = pd.read_csv("Data/International_Report_Departures.csv")
 #
