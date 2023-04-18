@@ -16,7 +16,7 @@ s = buffer.getvalue()
 
 with st.beta_container():
     st.write('## Data Summary')
-    st.write(s)
+    st.text(s)
 
 # We do not have the descriptions of the columns in the dataset.
 # Create a dataframe using MultiIndex in Pandas with column descriptions from the source
@@ -88,10 +88,10 @@ st.write('The size of the sampled dataframe is' , len(df_sampled))
 # Here let us consider the "Total" column for the distribution
 
 # sns.set_style('darkgrid')
-fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(10, 5))
+fig1, (ax1, ax2) = plt.subplots(ncols=2, figsize=(10, 5))
 sns.histplot(data=df_original, x="Total", kde=True, bins=5, ax=ax1)
 sns.histplot(data=df_sampled, x="Total", kde=True, bins=5, ax=ax2)
-st.pyplot(fig)
+st.pyplot(fig1)
 
 # Both the distributions appear to be the same and hence we can proceed with our analysis with the sampled dataset
 
@@ -158,7 +158,7 @@ else:
 
 columns_of_interest = ["Scheduled", "Charter", "Total"]
 df_outliers = df_sampled[columns_of_interest].copy()
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
+fig2, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
 
 # histogram for distribution
 ax1.hist(df_outliers, label=["Scheduled", "Charter", "Total"])
@@ -173,7 +173,7 @@ ax2.set_ylabel('Values')
 ax2.set_xticklabels(["Scheduled", "Charter", "Total"])
 ax2.set_title('Box Plot of Outlier Values')
 
-st.pyplot(fig)
+st.pyplot(fig2)
 
 # We can see that the data is positively skewed since the values are mostly on the left side of the distribution,
 # indicating some extreme values in the distribution. This also means that we need to normalize the data or transform
@@ -199,11 +199,12 @@ def busiest_airports(groupby_column, sum_column) -> None:
     busiest_airports = departures_by_airport.sort_values(ascending=False)
     airport = busiest_airports.index[0:10]
     total = busiest_airports.values[0:10]
-    plt.bar(airport, total)
-    plt.xlabel(groupby_column)
-    plt.ylabel(sum_column + ' - US')
-    plt.title('Top 10 Busiest US Airports (1990-2020) based on ' + sum_column)
-    st.pyplot(fig)
+    # fig2, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
+    # plt.bar(airport, total)
+    # plt.xlabel(groupby_column)
+    # plt.ylabel(sum_column + ' - US')
+    # plt.title('Top 10 Busiest US Airports (1990-2020) based on ' + sum_column)
+    st.bar_chart(data=busiest_airports, x=groupby_column, y=sum_column)
     return
 
 
