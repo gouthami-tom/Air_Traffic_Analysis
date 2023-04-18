@@ -2,16 +2,20 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import io
 import streamlit as st
-import openpyxl
 
 # Load the data into a dataframe
 df_original = pd.read_csv("Data/International_Report_Departures.csv")
 #
 # Print the summary
+buffer = io.StringIO()
+df_original.info(buf=buffer)
+s = buffer.getvalue()
+
 with st.beta_container():
     st.write('## Data Summary')
-    st.write(df_original.info())
+    st.write(s)
 
 # We do not have the descriptions of the columns in the dataset.
 # Create a dataframe using MultiIndex in Pandas with column descriptions from the source
@@ -51,7 +55,6 @@ def show_column_descriptions():
 if st.button("Show Column Descriptions"):
     show_column_descriptions()
 
-
 # Note that the datatype of fields other than object from the original dataframe changed into object, resulting in a
 # dataframe with all the values as object types. This is because the MultiIndex stores the data as pandas series
 # which is of type object. We can perform typecasting here explicitly but in order not to complicate it let us use
@@ -59,25 +62,24 @@ if st.button("Show Column Descriptions"):
 # dataset.
 
 # Print initial rows
-print('-----------------------------------------------------')
-print(df_original.head())
-print('-----------------------------------------------------')
+st.write('-----------------------------------------------------')
+st.write(df_original.head())
+st.write('-----------------------------------------------------')
 
 # Print the shape(dimensions)
-print(f'The dimensions of the data are {df_original.shape}')
+st.write('The dimensions of the data are', df_original.shape)
 
 # The data is huge and hence let us consider a sample of the data for our analysis
 # 0.1 indicates we consider 10% of the rows from original dataset
 df_sampled = df_original.sample(frac=0.1, random_state=22)
 
-print(f'The dimensions of the sampled data are {df_sampled.shape}')
-
+st.write('The dimensions of the sampled data are', df_sampled.shape)
 # It is very important that we do not consider a random sample, as the resultant analysis may be biased towards a
 # particular feature. Hence, we need to know the descriptive statistics and distribution of the sampled dataframe for
 # an accurate analysis.
 
 # 1. Sample size
-print(f'The size of the sampled dataframe is {len(df_sampled)}')
+st.write('The size of the sampled dataframe is' , len(df_sampled))
 
 # 2. Sample Distribution
 # For the distribution we can plot same variables from the original data and sampled data
@@ -88,7 +90,7 @@ print(f'The size of the sampled dataframe is {len(df_sampled)}')
 fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(10, 5))
 sns.histplot(data=df_original, x="Total", kde=True, bins=5, ax=ax1)
 sns.histplot(data=df_sampled, x="Total", kde=True, bins=5, ax=ax2)
-plt.show()
+st.pyplot(fig)
 
 # Both the distributions appear to be the same and hence we can proceed with our analysis with the sampled dataset
 
@@ -170,7 +172,7 @@ ax2.set_ylabel('Values')
 ax2.set_xticklabels(["Scheduled", "Charter", "Total"])
 ax2.set_title('Box Plot of Outlier Values')
 
-plt.show()
+st.pyplot(fig)
 
 # We can see that the data is positively skewed since the values are mostly on the left side of the distribution,
 # indicating some extreme values in the distribution. This also means that we need to normalize the data or transform
@@ -200,7 +202,7 @@ def busiest_airports(groupby_column, sum_column) -> None:
     plt.xlabel(groupby_column)
     plt.ylabel(sum_column + ' - US')
     plt.title('Top 10 Busiest US Airports (1990-2020) based on ' + sum_column)
-    plt.show()
+    st.pyplot(fig)
     return
 
 
