@@ -259,13 +259,13 @@ def busiest_airports(df, groupby_column, sum_column):
     ax.bar(airport, total)
     ax.set_xlabel(groupby_column)
     ax.set_ylabel(sum_column + ' - US')
-    ax.set_title('Top 10 Busiest US Airports (1990-2020) based on ' + sum_column)
+    ax.set_title('Top 10 Busiest Airports (1990-2020) based on ' + sum_column)
     return fig
 
 
-fig3 = busiest_airports("usg_apt", "Total")
+fig3 = busiest_airports(df_sampled, "usg_apt", "Total")
 st.pyplot(fig3)
-fig4 = busiest_airports("fg_apt", "Total")
+fig4 = busiest_airports(df_sampled,"fg_apt", "Total")
 st.pyplot(fig4)
 
 # There could be further analysis that can be conducted using this data such as predicting the airport usage in the
