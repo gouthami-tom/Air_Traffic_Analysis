@@ -238,19 +238,35 @@ None
 """
 
 
-def busiest_airports(groupby_column, sum_column) -> None:
-    departures_by_airport = df_sampled.groupby(groupby_column)[sum_column].sum()
+# def busiest_airports(groupby_column, sum_column) -> None:
+#     departures_by_airport = df_sampled.groupby(groupby_column)[sum_column].sum()
+#     busiest_airports = departures_by_airport.sort_values(ascending=False)
+#     airport = busiest_airports.index[0:10]
+#     total = busiest_airports.values[0:10]
+#     plt.bar(airport, total)
+#     plt.xlabel(groupby_column)
+#     plt.ylabel(sum_column + ' - US')
+#     plt.title('Top 10 Busiest US Airports (1990-2020) based on ' + sum_column)
+#     plt.show()
+#     return
+
+def busiest_airports(df, groupby_column, sum_column):
+    departures_by_airport = df.groupby(groupby_column)[sum_column].sum()
     busiest_airports = departures_by_airport.sort_values(ascending=False)
-    busiest_airports_df = busiest_airports.to_frame().reset_index()
-    airport = busiest_airports.index.tolist()[0:10]
-    total = busiest_airports.values.tolist()[0:10]
-    st.subheader('Top 10 Busiest Airports (1990-2020) based on ' + sum_column)
-    st.bar_chart(data=busiest_airports_df)
-    return
+    airport = busiest_airports.index[0:10]
+    total = busiest_airports.values[0:10]
+    fig, ax = plt.subplots()
+    ax.bar(airport, total)
+    ax.set_xlabel(groupby_column)
+    ax.set_ylabel(sum_column + ' - US')
+    ax.set_title('Top 10 Busiest US Airports (1990-2020) based on ' + sum_column)
+    return fig
 
 
-busiest_airports("usg_apt", "Total")
-busiest_airports("fg_apt", "Total")
+fig3 = busiest_airports("usg_apt", "Total")
+st.pyplot(fig3)
+fig4 = busiest_airports("fg_apt", "Total")
+st.pyplot(fig4)
 
 # There could be further analysis that can be conducted using this data such as predicting the airport usage in the
 # upcoming years, relationship between carrier and airport, predicting the passengers count using the passengers data
