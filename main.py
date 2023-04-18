@@ -45,7 +45,7 @@ buffer = io.StringIO()
 df_original.info(buf=buffer)
 s = buffer.getvalue()
 
-with st.beta_container():
+with st.container():
     st.header('Data Summary')
     st.text(s)
 
@@ -112,7 +112,7 @@ st.write('The dimensions of the sampled data are', df_sampled.shape)
 # an accurate analysis.
 
 # 1. Sample size
-st.write('The size of the sampled dataframe is' , len(df_sampled))
+st.write('The size of the sampled dataframe is' , str(len(df_sampled)))
 
 # 2. Sample Distribution
 # For the distribution we can plot same variables from the original data and sampled data
