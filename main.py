@@ -2,13 +2,16 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import streamlit as st
 import openpyxl
 
 # Load the data into a dataframe
 df_original = pd.read_csv("Data/International_Report_Departures.csv")
 #
 # Print the summary
-print(df_original.info())
+with st.beta_container():
+    st.write('## Data Summary')
+    st.write(df_original.info())
 
 # We do not have the descriptions of the columns in the dataset.
 # Create a dataframe using MultiIndex in Pandas with column descriptions from the source
@@ -38,8 +41,16 @@ columns = [('data_dte', 'Data Date'),
 df_descriptions = pd.DataFrame(df_original.values,
                                columns=pd.MultiIndex.from_tuples(columns, names=["Columns", "Column Description"]))
 
+
 # Print the summary with descriptions added
-print(df_descriptions.info())
+def show_column_descriptions():
+    with st.beta_expander("Column Descriptions"):
+        st.write(df_descriptions)
+
+
+if st.button("Show Column Descriptions"):
+    show_column_descriptions()
+
 
 # Note that the datatype of fields other than object from the original dataframe changed into object, resulting in a
 # dataframe with all the values as object types. This is because the MultiIndex stores the data as pandas series
@@ -137,7 +148,6 @@ if duplicates.any():
 else:
     print("No duplicate entries found")
 
-
 # 3. Examine the outliers
 # To examine the outliers we can use different plots and see if we have extreme values
 # that effect the overall distribution.
@@ -146,13 +156,12 @@ columns_of_interest = ["Scheduled", "Charter", "Total"]
 df_outliers = df_sampled[columns_of_interest].copy()
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
 
-#histogram for distribution
+# histogram for distribution
 ax1.hist(df_outliers, label=["Scheduled", "Charter", "Total"])
 ax1.set_xlabel('Values')
 ax1.set_ylabel('Frequency')
 ax1.set_title('Sampled Data Distribution')
 ax1.legend()
-
 
 # #boxplot
 ax2.boxplot(df_outliers)
@@ -197,12 +206,9 @@ def busiest_airports(groupby_column, sum_column) -> None:
 busiest_airports("usg_apt", "Total")
 busiest_airports("fg_apt", "Total")
 
-
 # There could be further analysis that can be conducted using this data such as predicting the airport usage in the
 # upcoming years, relationship between carrier and airport, predicting the passengers count using the passengers data
 # to determine flight prices and airfreight charges in the future. These can be performed using various Machine
 # Learning techniques but require much more data preprocessing and transformations.
 
 # This code is to demonstrate the importance of data analysis and how data quality can impact the decisions we make.
-
-
