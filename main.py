@@ -63,6 +63,7 @@ if st.button("Show Column Descriptions"):
 # dataset.
 
 # Print initial rows
+st.write("First Look of the Data")
 st.write('-----------------------------------------------------')
 st.write(df_original.head())
 st.write('-----------------------------------------------------')
@@ -88,6 +89,7 @@ st.write('The size of the sampled dataframe is' , len(df_sampled))
 # Here let us consider the "Total" column for the distribution
 
 # sns.set_style('darkgrid')
+st.write("Data distribution comparision between the original and sample dataframes")
 fig1, (ax1, ax2) = plt.subplots(ncols=2, figsize=(10, 5))
 sns.histplot(data=df_original, x="Total", kde=True, bins=5, ax=ax1)
 sns.histplot(data=df_sampled, x="Total", kde=True, bins=5, ax=ax2)
@@ -184,12 +186,21 @@ st.pyplot(fig2)
 # Simple Insights using the dataset
 
 # Busiest airports
-"""
+
+_= """
 This function is used to determine the busiest airports based on the area code 
 by IATA and plot them using a barplot.
-:param myParam1: Column name by which groupby should be performed
-:param myParam2: Column name we want to visualize the groupby
-:return: None
+
+Parameters
+----------
+groupby_column: plain_text
+                Column name by which groupby should be performed
+sum_column:    plain_text 
+                Column name we want to visualize the groupby
+
+Returns
+---------
+None
 
 """
 
@@ -203,8 +214,8 @@ def busiest_airports(groupby_column, sum_column) -> None:
     # plt.bar(airport, total)
     # plt.xlabel(groupby_column)
     # plt.ylabel(sum_column + ' - US')
-    # plt.title('Top 10 Busiest US Airports (1990-2020) based on ' + sum_column)
-    st.bar_chart(data=busiest_airports, x=groupby_column, y=sum_column)
+    plt.title('Top 10 Busiest US Airports (1990-2020) based on ' + sum_column)
+    st.bar_chart(data=busiest_airports, x=airport, y=total)
     return
 
 
