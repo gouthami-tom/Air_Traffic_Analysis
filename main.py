@@ -26,6 +26,10 @@ add_bg_from_local('Data/flight.jpg')
 
 # Texts
 st.title("Data Analysis for U.S. International Air Traffic data(1990-2020)")
+st.sidebar.title("About")
+st.sidebar.subheader("Developed by Priyanka Raparthi")
+st.sidebar.markdown("Data and Computing Science Researcher - Carleton University")
+st.sidebar.markdown("Contact: gouthamipriyanka1512@gmail.com")
 st.sidebar.markdown("There could be further analysis that can be conducted using this data such as predicting the airport usage in the upcoming years, relationship between carrier and airport, predicting the passengers count using the passengers data to determine flight prices and airfreight charges in the future. These can be performed using various Machine Learning techniques but require much more data preprocessing and transformations.")
 st.sidebar.markdown("This app is deployed using Streamlit Free Community Cloud")
 st.sidebar.markdown("Link to dataset: https://data.transportation.gov/Aviation/International_Report_Departures/innc-gbgc")
@@ -34,14 +38,15 @@ st.sidebar.markdown("Link to dataset: https://data.transportation.gov/Aviation/I
 
 # Load the data into a dataframe
 df_original = pd.read_csv("Data/International_Report_Departures.csv")
-#
+
+
 # Print the summary
 buffer = io.StringIO()
 df_original.info(buf=buffer)
 s = buffer.getvalue()
 
 with st.beta_container():
-    st.header('## Data Summary')
+    st.header('Data Summary')
     st.text(s)
 
 # We do not have the descriptions of the columns in the dataset.
@@ -240,7 +245,7 @@ def busiest_airports(groupby_column, sum_column) -> None:
     airport = busiest_airports.index.tolist()[0:10]
     total = busiest_airports.values.tolist()[0:10]
     st.subheader('Top 10 Busiest Airports (1990-2020) based on ' + sum_column)
-    st.bar_chart(data=busiest_airports_df, x=airport, y=total)
+    st.bar_chart(data=busiest_airports_df)
     return
 
 
