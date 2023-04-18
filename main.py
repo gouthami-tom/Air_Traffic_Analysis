@@ -26,7 +26,11 @@ add_bg_from_local('Data/flight.jpg')
 
 # Texts
 st.title("Data Analysis for U.S. International Air Traffic data(1990-2020)")
+st.sidebar.markdown("There could be further analysis that can be conducted using this data such as predicting the airport usage in the upcoming years, relationship between carrier and airport, predicting the passengers count using the passengers data to determine flight prices and airfreight charges in the future. These can be performed using various Machine Learning techniques but require much more data preprocessing and transformations.")
+st.sidebar.markdown("This app is deployed using Streamlit Free Community Cloud")
+st.sidebar.markdown("Link to dataset: https://data.transportation.gov/Aviation/International_Report_Departures/innc-gbgc")
 
+# This code is to demonstrate the importance of data analysis and how data quality can impact the decisions we make.")
 
 # Load the data into a dataframe
 df_original = pd.read_csv("Data/International_Report_Departures.csv")
@@ -37,7 +41,7 @@ df_original.info(buf=buffer)
 s = buffer.getvalue()
 
 with st.beta_container():
-    st.write('## Data Summary')
+    st.header('## Data Summary')
     st.text(s)
 
 # We do not have the descriptions of the columns in the dataset.
@@ -85,7 +89,7 @@ if st.button("Show Column Descriptions"):
 # dataset.
 
 # Print initial rows
-st.write("First Look of the Data")
+st.subheader("First Look of the Data")
 st.write('-----------------------------------------------------')
 st.write(df_original.head())
 st.write('-----------------------------------------------------')
@@ -103,7 +107,7 @@ st.write('The dimensions of the sampled data are', df_sampled.shape)
 # an accurate analysis.
 
 # 1. Sample size
-st.write('The size of the sampled dataframe is' , len(df_sampled))
+st.subheader('The size of the sampled dataframe is' , len(df_sampled))
 
 # 2. Sample Distribution
 # For the distribution we can plot same variables from the original data and sampled data
@@ -111,7 +115,7 @@ st.write('The size of the sampled dataframe is' , len(df_sampled))
 # Here let us consider the "Total" column for the distribution
 
 # sns.set_style('darkgrid')
-st.write("Data distribution comparision between the original and sample dataframes")
+st.subheader("Data distribution comparision between the original and sample dataframes")
 fig1, (ax1, ax2) = plt.subplots(ncols=2, figsize=(10, 5))
 sns.histplot(data=df_original, x="Total", kde=True, bins=5, ax=ax1)
 sns.histplot(data=df_sampled, x="Total", kde=True, bins=5, ax=ax2)
@@ -184,6 +188,8 @@ columns_of_interest = ["Scheduled", "Charter", "Total"]
 df_outliers = df_sampled[columns_of_interest].copy()
 fig2, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
 
+
+st.subheader("Histogram and a Boxplot showing skewness and Outliers")
 # histogram for distribution
 ax1.hist(df_outliers, label=["Scheduled", "Charter", "Total"])
 ax1.set_xlabel('Values')
@@ -231,9 +237,9 @@ def busiest_airports(groupby_column, sum_column) -> None:
     departures_by_airport = df_sampled.groupby(groupby_column)[sum_column].sum()
     busiest_airports = departures_by_airport.sort_values(ascending=False)
     busiest_airports_df = busiest_airports.to_frame().reset_index()
-    airport = busiest_airports.index[0:10]
-    total = busiest_airports.values[0:10]
-    st.write('Top 10 Busiest US Airports (1990-2020) based on ' + sum_column)
+    airport = busiest_airports.index.tolist()[0:10]
+    total = busiest_airports.values.tolist()[0:10]
+    st.subheader('Top 10 Busiest Airports (1990-2020) based on ' + sum_column)
     st.bar_chart(data=busiest_airports_df, x=airport, y=total)
     return
 
