@@ -22,7 +22,7 @@ def add_bg_from_local(image_file):
         unsafe_allow_html=True
     )
 
-add_bg_from_local('Data//flight.jpg')
+add_bg_from_local('Data/flight.jpg')
 
 # Texts
 st.title("Data Analysis for U.S. International Air Traffic data(1990-2020)")
