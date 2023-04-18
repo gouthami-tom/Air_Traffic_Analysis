@@ -26,13 +26,15 @@ add_bg_from_local('Data/flight.jpg')
 
 # Texts
 st.title("Data Analysis for U.S. International Air Traffic data(1990-2020)")
-st.sidebar.title("About")
-st.sidebar.subheader("Developed by Priyanka Raparthi")
+st.sidebar.header("About")
+st.sidebar.subheader("Developed by: Priyanka Raparthi")
 st.sidebar.markdown("Data and Computing Science Researcher - Carleton University")
 st.sidebar.markdown("Contact: gouthamipriyanka1512@gmail.com")
+st.sidebar.divider("Description")
 st.sidebar.markdown("There could be further analysis that can be conducted using this data such as predicting the airport usage in the upcoming years, relationship between carrier and airport, predicting the passengers count using the passengers data to determine flight prices and airfreight charges in the future. These can be performed using various Machine Learning techniques but require much more data preprocessing and transformations.")
-st.sidebar.markdown("This app is deployed using Streamlit Free Community Cloud")
-st.sidebar.markdown("Link to dataset: https://data.transportation.gov/Aviation/International_Report_Departures/innc-gbgc")
+st.sidebar.markdown("This app is deployed using Streamlit Community Cloud")
+st.sidebar.divider("Link to dataset: https://data.transportation.gov/Aviation/International_Report_Departures/innc-gbgc")
+st.sidebar.divider("For complete code and explanation check https://github.com/gouthami-tom/Air_Traffic_Analysis")
 
 # This code is to demonstrate the importance of data analysis and how data quality can impact the decisions we make.")
 
@@ -122,8 +124,8 @@ st.write('The size of the sampled dataframe is' , str(len(df_sampled)))
 # sns.set_style('darkgrid')
 st.subheader("Data distribution comparision between the original and sample dataframes")
 fig1, (ax1, ax2) = plt.subplots(ncols=2, figsize=(10, 5))
-sns.histplot(data=df_original, x="Total", kde=True, bins=5, ax=ax1)
-sns.histplot(data=df_sampled, x="Total", kde=True, bins=5, ax=ax2)
+sns.histplot(data=df_original, x="Total-Original", kde=True, bins=5, ax=ax1)
+sns.histplot(data=df_sampled, x="Total-Sample", kde=True, bins=5, ax=ax2)
 st.pyplot(fig1)
 
 # Both the distributions appear to be the same and hence we can proceed with our analysis with the sampled dataset
@@ -226,31 +228,22 @@ by IATA and plot them using a barplot.
 
 Parameters
 ----------
+df: pandas dataframe
+    Dataframe that needs to be plotted
 groupby_column: plain_text
                 Column name by which groupby should be performed
 sum_column:    plain_text 
                 Column name we want to visualize the groupby
+title:  plain_text
+        title for the plot
 
 Returns
 ---------
-None
+Figure with the plots
 
 """
 
-
-# def busiest_airports(groupby_column, sum_column) -> None:
-#     departures_by_airport = df_sampled.groupby(groupby_column)[sum_column].sum()
-#     busiest_airports = departures_by_airport.sort_values(ascending=False)
-#     airport = busiest_airports.index[0:10]
-#     total = busiest_airports.values[0:10]
-#     plt.bar(airport, total)
-#     plt.xlabel(groupby_column)
-#     plt.ylabel(sum_column + ' - US')
-#     plt.title('Top 10 Busiest US Airports (1990-2020) based on ' + sum_column)
-#     plt.show()
-#     return
-
-def busiest_airports(df, groupby_column, sum_column):
+def busiest_airports(df, groupby_column, sum_column,title):
     departures_by_airport = df.groupby(groupby_column)[sum_column].sum()
     busiest_airports = departures_by_airport.sort_values(ascending=False)
     airport = busiest_airports.index[0:10]
@@ -258,14 +251,14 @@ def busiest_airports(df, groupby_column, sum_column):
     fig, ax = plt.subplots()
     ax.bar(airport, total)
     ax.set_xlabel(groupby_column)
-    ax.set_ylabel(sum_column + ' - US')
-    ax.set_title('Top 10 Busiest Airports (1990-2020) based on ' + sum_column)
+    ax.set_ylabel(sum_column)
+    ax.set_title(title + sum_column)
     return fig
 
 
-fig3 = busiest_airports(df_sampled, "usg_apt", "Total")
+fig3 = busiest_airports(df_sampled, "usg_apt", "Total","Top 10 Busiest US Airports (1990-2020) based on ")
 st.pyplot(fig3)
-fig4 = busiest_airports(df_sampled,"fg_apt", "Total")
+fig4 = busiest_airports(df_sampled,"fg_apt", "Total","Top 10 Busiest Foreign Airports (1990-2020) based on ")
 st.pyplot(fig4)
 
 # There could be further analysis that can be conducted using this data such as predicting the airport usage in the
