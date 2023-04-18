@@ -127,8 +127,8 @@ st.write('The size of the sampled dataframe is' , str(len(df_sampled)))
 # sns.set_style('darkgrid')
 st.subheader("Data distribution comparision between the original and sample dataframes")
 fig1, (ax1, ax2) = plt.subplots(ncols=2, figsize=(10, 5))
-sns.histplot(data=df_original, x="Total-Original", kde=True, bins=5, ax=ax1)
-sns.histplot(data=df_sampled, x="Total-Sample", kde=True, bins=5, ax=ax2)
+sns.histplot(data=df_original, x="Total", kde=True, bins=5, ax=ax1)
+sns.histplot(data=df_sampled, x="Total", kde=True, bins=5, ax=ax2)
 st.pyplot(fig1)
 
 # Both the distributions appear to be the same and hence we can proceed with our analysis with the sampled dataset
