@@ -3,6 +3,8 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import streamlit as st
+import openpyxl
+
 
 # Load the data into a dataframe
 df_original = pd.read_csv("Data/International_Report_Departures.csv")
